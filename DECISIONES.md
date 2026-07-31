@@ -335,28 +335,58 @@ curl.exe "http://localhost:8146/api/agrosmart/publicidad?producto=Rosas%20de%20e
 **7.1** Pega la salida real de tus pruebas (`./mvnw test` o `./gradlew test`).
 
 ```
-
+PS C:\Users\Milton Cueva\Documents\agrosmart-final-cueva> .\mvnw.cmd test
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 10.44 s -- in ec.edu.espe.agrosmart.AgrosmartApplicationTests
+[INFO] Running ec.edu.espe.agrosmart.domain.ProductoFiltersTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.020 s -- in ec.edu.espe.agrosmart.domain.ProductoFiltersTest
+[INFO] Running ec.edu.espe.agrosmart.domain.ProductoTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.023 s -- in ec.edu.espe.agrosmart.domain.ProductoTest
+[INFO] Running ec.edu.espe.agrosmart.service.ProductoServiceTest
+Procesando producto id=null, nombre=ROSAS DE EXPORTACIÓN
+Procesando producto id=null, nombre=CLAVELES PREMIUM
+Procesando producto id=null, nombre=ORQUÍDEAS SELECCIONADAS
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.404 s -- in ec.edu.espe.agrosmart.service.ProductoServiceTest
+[INFO] Running ec.edu.espe.agrosmart.service.PublicidadServiceTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.101 s -- in ec.edu.espe.agrosmart.service.PublicidadServiceTest
+[INFO]
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0
+[INFO]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
 ```
 
 **7.2** ¿Cuántos productos espera tu `expectNextCount(...)` y por qué ese número
 concreto? Relaciónalo con tu semilla.
 
->
+>Mi `expectNextCount(...)` espera 3 productos porque mi siembra de la categoría `Flores` tiene en 
+> total 5 productos pero solo 3 son comercializables, los otros 2 son invalidos ya que uno tiene 
+> `precio_usd = 0` y otro tiene correos vacios. Por esa razon el filtro ProductoFilters.IS_VALID` 
+> solo deja pasar solo los 3 válidos de mi semilla
 
 **7.3** ¿Por qué mockeaste `ProductoRepository` en lugar de dejar que la prueba consulte
 PostgreSQL?
 
->
+>porque esta prueba debe revisar la lógica del servicio y no depender de si Docker o PostgreSQL están 
+> levantados, con Mockito controlo exactamente qué datos devuelve el repositorio y puedo probar los 
+> casos de 3 validos, todos invalidos y los de id inexistente sn tener que depender de la base real
 
 **7.4** ¿Qué demuestra `assertNotSame` que `assertEquals` **no** demuestra en tu prueba
 de copia defensiva?
 
->
+>`assertNotSame` demuestra que el contenido de las listas es igual, por otra parte `assertNotSame`
+> demuestra que no son el mismo objeto en memoria y eso es importante en la copia defensiva por que no
+> basta con tener los mismos correos, hay q asegurarse de que `Producto` no guarda ni devuelve la misma 
+> referencia de la lista externa
 
 **7.5** ¿Por qué una prueba de un `Flux` que no llama a `verifyComplete()` (o a
 `verify()`) no está probando nada?
 
->
+>Por que `Flux` no ejecuta nada hasta que alguien se suscribe, en las pruebas `StepVerifier` se suscribe 
+> recien cuando llamo a `verifyComplete()` o `verify()`, que pasa si no llamo a uno de esos metodos, el 
+> flujo puede querase armado pero nunca ejecutarse. Entonces la prueba realmente no verifica emisiones
+> ni errores
 
 ---
 
