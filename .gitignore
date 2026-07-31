@@ -38,3 +38,7 @@ Thumbs.db
 # --- Secretos: nunca subir claves reales ---
 *.env
 application-local.properties
+
+# --- Archivos temporales de trabajo local ---
+work/
+work-starter.zip
