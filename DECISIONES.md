@@ -17,10 +17,10 @@
 
 ## Datos
 
-- **Nombre:**
-- **Cédula:**
-- **NN (dos últimos dígitos):**
-- **Categoría asignada (según el último dígito):**
+- **Nombre:** Milton Ariel Cueva Guamingo
+- **Cédula:** 1727420646
+- **NN (dos últimos dígitos):** 46
+- **Categoría asignada (según el último dígito):** Flores
 
 ---
 
@@ -28,23 +28,27 @@
 
 **1.1** ¿Qué archivo activa el perfil `prod` y qué línea exacta lo hace?
 
->
+>El perfil `prod` se activa en el archivo `application.properties` en la linea 2.
 
 **1.2** Pega la línea del log de arranque donde se ve tu puerto y el perfil activo.
 
 ```
-
+2026-07-30T22:33:38.330-05:00  INFO 22580 --- [agrosmart] [           main] o.s.boot.reactor.netty.NettyWebServer    : Netty started on port 8146 (http)
+2026-07-30T22:33:31.703-05:00  INFO 22580 --- [agrosmart] [           main] e.e.espe.agrosmart.AgrosmartApplication  : The following 1 profile is active: "prod"
 ```
+
 
 **1.3** ¿Qué habría pasado si dejabas `ddl-auto=create-drop` en lugar de `update`?
 Responde pensando en tus datos sembrados.
 
->
+>Si se quedaba como create-drop, hiberante crea las tablas al arrancar y las borra al apagar la app. En el futuro sembrare Flores y se elimiarian cuando la app se apague. Con la opcion d eupdate se conserva la tabla.
 
 **1.4** ¿Levantaste PostgreSQL con `compose.yaml` (Opción A) o con una instalación local
 (Opción B)? ¿Qué ventaja tiene la que elegiste?
 
->
+>Elegi la opcion A por que queria que PostgreSQL se levante con docker y no tener q hacer instalaciones locales. Tuve un problema al ejecutar la apliacionn, el contenedor si funcionaba pero el puerto 5432 daba problemas de autenticación por algun tema de conflico 
+>con algun servicio o configuración anterior. Cambie el puerto a 5434 y deje colocada la conexión en `application-prod.properties`
+>dentro del contenedor PostgreSQL sigue usando 5432 solo cambié el puerto publicado hacia mi máquina.
 
 ---
 
