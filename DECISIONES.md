@@ -115,26 +115,51 @@ lo fuera? (piensa en la restricción `unique` de `nombre_producto`)
 **3.1** ¿Por qué tienes **dos** clases (`ProductoEntity` y `Producto`) en lugar de una?
 ¿Qué te impide hacer inmutable directamente la entidad de Hibernate?
 
->
+>`ProductoEntity` es la tabla de PostgreSQL y la usa Hiberante, no le hice unmutable directamente
+> por que Hiberanate necesita el constructor vacio y los setters para crear y cargar los objetos
+> desde la base de datos. `Producto` en cambio representa el modelo de dominio que uso en la lógica
+> del proyecto y esta es `final`, tiene atributos `private final` y no tiene setters.
 
 **3.2** Escribe el código exacto de **tus dos** copias defensivas e indica en qué línea
 está cada una.
 
 ```java
+this.correosNotificacion = new ArrayList<>(correosNotificacion);
+
+return Collections.unmodifiableList(new ArrayList<>(correosNotificacion));
+```
+```
+La primera se encuentra en el constructor de `Producto` cuando se recibe la lsita desde afuera
+
+La segunda esta se encuentra en el getter `getCorreosNotificacion()` cuando devuelvo una copia 
+de solo lectura
 
 ```
+
 
 **3.3** ¿Por qué la copia defensiva **solo en el getter** no sería suficiente? Describe
 el ataque concreto que quedaría abierto sobre **tu** clase.
 
->
+>So solo se hiciera la copia defensiva en el getter todavia quedaria abierto al ataque desde el 
+> constructor, si alguien podria crear una lista externa, construir un `Producto` con esa
+> lista y modificar la lista original con `add()`. Si mi constructor guardara la misma 
+> referencia, el estado interno de `Producto` cambiaria desde afuera sin importar que la 
+> clase no tenga setters
 
 **3.4** ¿Cómo implementaste `A_MAYUSCULAS` para no mutar el `Producto` recibido?
 
 ```java
-
+public static final Function<Producto, Producto> A_MAYUSCULAS = producto ->
+        new Producto(
+                producto.getId(),
+                producto.getNombre().toUpperCase(),
+                producto.getCategoria(),
+                producto.getPrecioUsd(),
+                producto.getCorreosNotificacion()
+        );
 ```
-
+>lo hice creando una nueva instancia de `Producto` con el nombre en mayusculas, esto no cambia 
+> el producto recibido por que la clase `Producto" es inmutable y no tiene setters
 ---
 
 ## Fase 4 — Servicio reactivo y aislamiento del bloqueo
