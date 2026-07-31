@@ -6,26 +6,26 @@
 >
 > Completa **todos** los campos. El código del examen ya viene escrito: no lo cambies.
 
-- **Nombre completo:**
-- **Cédula:**
-- **NRC:**
-- **Código del examen:** `AGSK-2026`
-- **Fecha y hora de inicio:**      <!-- formato: 2026-XX-XX HH:MM -->
+- **Nombre completo:** Milton Ariel Cueva Guamingo
+- **Cédula:** 1727420646
+- **NRC:** 30405
+- **Código del examen:** AGSK-2026
+- **Fecha y hora de inicio:** 2026-07-30 20:29
 
 ---
 
 ## Mi semilla personal
 
-Sean `NN` los **dos últimos dígitos** de mi cédula. No hay cálculos: se copian dígitos y
+Sean 46 los **dos últimos dígitos** de mi cédula. No hay cálculos: se copian dígitos y
 se busca en una tabla.
 
-| # | Parámetro | Cómo se obtiene | Mi valor |
-|:---:|-----------|-----------------|----------|
-| — | `NN` | los 2 últimos dígitos de mi cédula | |
-| 1 | Nombre de la tabla | `tbl_productos_base_` + `NN` | |
-| 2 | Puerto | `81` + `NN` | |
-| 3 | Categoría | según el **último dígito** (tabla de abajo) | |
-| — | Audiencia para el prompt de IA | según la categoría | |
+| # | Parámetro | Mi valor |
+|:---:|---------|----------|
+| — | NN        | 46       |
+| 1 | Nombre de la tabla | tbl_productos_base_46 |
+| 2 | Puerto    | 8146     |
+| 3 | Categoría | 6        |
+| — | Audiencia para el prompt de IA | Flores |
 
 **Tabla de categorías:**
 
@@ -36,16 +36,6 @@ se busca en una tabla.
 | 4 o 5 | Banano | supermercados mayoristas |
 | 6 o 7 | Flores | floristerías premium |
 | 8 o 9 | Quinua | tiendas de alimentación saludable |
-
-> ✅ **Autocomprobación:** mi puerto empieza por `81` y termina con los mismos dos
-> dígitos que el nombre de mi tabla.
->
-> ⚠️ **La categoría no va en el nombre de la tabla.** La tabla es
-> `tbl_productos_base_` + mis dos dígitos. La categoría define los **productos que
-> siembro dentro** y la **audiencia del prompt de IA**.
-
-**Valores fijos, iguales para todo el curso:** base de datos `agrosmart_db`,
-**3 productos válidos** y **2 inválidos**.
 
 ---
 
