@@ -233,33 +233,65 @@ qué no son intercambiables en esos dos lugares?
 **5.1** Pega tu interfaz `AgroSmartAIService` completa.
 
 ```java
+package ec.edu.espe.agrosmart.ai;
 
+import dev.langchain4j.service.UserMessage;
+import dev.langchain4j.service.V;
+import dev.langchain4j.service.spring.AiService;
+
+@AiService
+public interface AgroSmartAIService {
+
+    @UserMessage("""
+            Redacta una frase publicitaria de máximo 100 caracteres para vender \
+            {{producto}} dirigido a {{audiencia}}.""")
+    String generarPublicidad(@V("producto") String producto,
+                             @V("audiencia") String audiencia);
+}
 ```
 
 **5.2** ¿Qué hace `@V("producto")` y qué pasaría si lo quitaras dejando solo el
 parámetro?
 
->
+>Conecta el parámetro Java `producto` con la variable `{{producto}}` que está dentro del prompt.
+> Si lo quitara, LangChain4j no sabría con qué valor llenar esa parte del mensaje y en este caso 
+> el prompt podría quedar incompleto o fallar porque la variable producto ya no estaría bien mapeada.
 
 **5.3** ¿En qué archivo y con qué líneas configuraste el modelo? ¿Por qué **no** hizo
 falta declarar un `@Bean`?
 
->
+>Configure el modelo en `application-prod.properties` con las siguientes lineas:
+```java
+langchain4j.open-ai.chat-model.api-key=demo
+langchain4j.open-ai.chat-model.model-name=gpt-4o-mini
+langchain4j.open-ai.chat-model.timeout=30s
+langchain4j.open-ai.chat-model.log-requests=true
+langchain4j.open-ai.chat-model.log-responses=true
+logging.level.dev.langchain4j=DEBUG
+```
+>No hizo falta por que el starter de LangChain4j ya lee esas propiedades y crea el modelo 
+> automaticamente, entonces si yo creaba otro @Bean, podía duplicar la configuración o hacer 
+> algo distinto a lo que pedía el README
 
 **5.4** ¿Por qué la llamada a la IA también necesita `boundedElastic`, si no es una
 consulta a base de datos?
 
->
+>Aunque no es una consulta a base de datos, igual es una llamada bloqueante porque sale por red 
+> hacia un proveedor externo, podria tardar, fallar o esperar respuesta. Si esa llamada se ejecuta 
+> en el event loop de WebFlux, puede bloquear un hilo de Netty, es por eso en `PublicidadService` 
+> la envolví con `Mono.fromCallable(...)` y use `subscribeOn(Schedulers.boundedElastic())`
 
 **5.5** Si tu proveedor devolvió un error durante el examen, pega el mensaje real y la
 respuesta que produjo tu `onErrorResume`.
 
+>No he probado una llamada aun pero ya esta preparado lo que deberia pasar en ese caso, esta en 
+> `PublicidadService` si LangChain4j falla `onErrorResume` devolvera este mensaje
 ```
-
+Publicidad no disponible en este momento (NombreDeLaExcepcion)
 ```
 
 ---
-
+>Cuando prueba el endpoint de publiciadad pegare arriba el error real si el proveedor falla
 ## Fase 6 — API reactiva con WebFlux
 
 **6.1** Pega la salida real de tus cuatro `curl`.
