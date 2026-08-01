@@ -47,6 +47,7 @@ se busca en una tabla.
 > haberlo entregado y C8 se califica en nivel 1.
 
 - **https://youtu.be/KBLNQzNzqlI**
+- **Verificación del enlace:** probado en ventana de incógnito el 2026-08-01
 - **YouTube**                  <!-- Drive institucional / OneDrive / YouTube no listado -->
 - **Acceso verificado en incógnito: Sí **
 - **05:36**
