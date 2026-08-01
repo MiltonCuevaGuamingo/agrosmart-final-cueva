@@ -41,13 +41,17 @@
 **1.3** ¿Qué habría pasado si dejabas `ddl-auto=create-drop` en lugar de `update`?
 Responde pensando en tus datos sembrados.
 
->Si se quedaba como create-drop, hiberante crea las tablas al arrancar y las borra al apagar la app. En el futuro sembrare Flores y se elimiarian cuando la app se apague. Con la opcion d eupdate se conserva la tabla.
+>Si se quedaba como create-drop, hiberante crea las tablas al arrancar y las borra al apagar la app. 
+> En el futuro sembrare Flores y se elimiarian cuando la app se apague. Con la opcion d eupdate se 
+> conserva la tabla.
 
 **1.4** ¿Levantaste PostgreSQL con `compose.yaml` (Opción A) o con una instalación local
 (Opción B)? ¿Qué ventaja tiene la que elegiste?
 
->Elegi la opcion A por que queria que PostgreSQL se levante con docker y no tener q hacer instalaciones locales. Tuve un problema al ejecutar la apliacionn, el contenedor si funcionaba pero el puerto 5432 daba problemas de autenticación por algun tema de conflico 
->con algun servicio o configuración anterior. Cambie el puerto a 5434 y deje colocada la conexión en `application-prod.properties`
+>Elegi la opción A por que queria que PostgreSQL se levante con docker y no tener q hacer instalaciones 
+> locales. Tuve un problema al ejecutar la aplicación, el contenedor si funcionaba pero el puerto 5432 
+> daba problemas de autenticación por algun tema de conflicto con algun servicio o configuración 
+> anterior. Cambie el puerto a 5434 y deje colocada la conexión en `application-prod.properties`
 >dentro del contenedor PostgreSQL sigue usando 5432 solo cambié el puerto publicado hacia mi máquina.
 
 ---
@@ -395,20 +399,45 @@ de copia defensiva?
 **8.1** Pega tu `git log --oneline --graph --all`.
 
 ```
-
+PS C:\Users\Milton Cueva\Documents\agrosmart-final-cueva> git log --oneline --graph --all
+* e191806 (HEAD -> feature/pruebas, origin/feature/pruebas) test: agrega pruebas del modelo, logica funcional, flujo reactivo e ia
+* 112d98d (origin/feature/api-reactiva, feature/api-reactiva) feat: expone endpoints reactivos y de publicidad
+* a7d0fe3 (origin/feature/ia-langchain4j, feature/ia-langchain4j) feat: integra langchain4j para publicidad de productos
+* bce68be (origin/feature/servicio-reactivo, feature/servicio-reactivo) feat: implementa servicio reactivo con boundedElastic y operadores
+* 8ae6d87 (origin/feature/modelo-inmutable, feature/modelo-inmutable) feat: agrega modelo inmutable de producto y logica funcional
+* afa37b4 (origin/feature/persistencia-jpa, feature/persistencia-jpa) feat: agrega entidad jpa de productos y siembra de datos
+* 9e80ace (origin/feature/config-perfiles, feature/config-perfiles) chore: configura perfil prod con postgresql y puerto propio
+* 3f3057f (origin/main, origin/HEAD, main) chore: inicializa proyecto agrosmart con webflux, jpa y langchain4j
+* dd3cfdc chore: inicializa proyecto agrosmart y registra identidad del examen
+* 2539d70 Initial commit
+PS C:\Users\Milton Cueva\Documents\agrosmart-final-cueva>
 ```
 
 **8.2** ¿Qué fase te tomó más tiempo del previsto y por qué?
 
->
+>La fase que mas tiempo me tomp fue la de configuración e integración inicial, porque desde el inicio 
+> tuve problemas con la conexión a PostgreSQL ya que en mi máquina el puerto `5432` ya estaba ocupado o 
+> tenía conflicto con una configuración anterior, así que aunque el contenedor se levantaba la aplicación 
+> no lograba conectarse. Después de probar y diagnosticar el problema cambie el puerto externo a 
+> `5434` y ahí recién pude continuar con normalidad. Por eso esa parte me tomó más tiempo del previsto 
+> que la lógica del proyecto en sí.
 
 **8.3** Si tuvieras 30 minutos más, ¿qué mejorarías **primero** de tu entrega y por qué
 esa y no otra?
 
->
+>Mejoraría la parte de pruebas y cierre final del repositorio especialmente dejar todavía más documentadas 
+> las evidencias y revisar una última vez el `README.md` y `DECISIONES.md`. Haría eso antes que agregar 
+> funcionalidades nuevas porque en este punto del examen ya tengo el flujo principal completo y lo que 
+> mas valor le daría a la entrega sería dejar mejor sustentado lo que ya funciona.
 
 **8.4** Declara honestamente qué herramientas consultaste durante el examen
 (documentación, apuntes, asistentes de IA) y para qué. **Esta declaración no descuenta
 puntaje**; su omisión o falsedad sí constituye falta de honestidad académica.
 
->
+>Durante el examen consulte el `README.md` del repositorio como guía principal de las fases, los 
+> requisitos y los mensajes de commit, tambien consulte la documentación y configuración normal de 
+> Spring Boot, WebFlux, JPA y LangChain4j para entender mejor algunas anotaciones, dependencias 
+> y operadores reactivos. Ademas, use un asistente de IA como apoyo para entender el enunciado, 
+> organizar el trabajo por fases y revisar errores de configuración. En todos los casos lo use como 
+> apoyo para comprender y resolver el proyecto, no como sustituto de la revisión y comprensión del 
+> código entregado.
