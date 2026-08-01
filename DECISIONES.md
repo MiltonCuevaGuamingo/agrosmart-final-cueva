@@ -158,7 +158,7 @@ public static final Function<Producto, Producto> A_MAYUSCULAS = producto ->
                 producto.getCorreosNotificacion()
         );
 ```
->lo hice creando una nueva instancia de `Producto` con el nombre en mayusculas, esto no cambia 
+>Lo hice creando una nueva instancia de `Producto` con el nombre en mayusculas, esto no cambia 
 > el producto recibido por que la clase `Producto" es inmutable y no tiene setters
 ---
 
@@ -167,29 +167,64 @@ public static final Function<Producto, Producto> A_MAYUSCULAS = producto ->
 **4.1** Pega tu método `obtenerProductosComercializables()` completo.
 
 ```java
-
+public Flux<Producto> obtenerProductosComercializables() {
+    // Mono.fromCallable difiere la consulta JPA hasta que alguien se suscribe al flujo.
+    return Mono.fromCallable(productoRepository::findAll)
+            // subscribeOn con boundedElastic mueve la llamada bloqueante de Hibernate fuera del event loop de Netty.
+            .subscribeOn(Schedulers.boundedElastic())
+            // flatMapMany transforma la lista bloqueante ya materializada en un Flux elemento por elemento.
+            .flatMapMany(Flux::fromIterable)
+            // map convierte la entidad mutable de Hibernate en mi modelo de dominio inmutable.
+            .map(ProductoMapper::toDominio)
+            // map aplica una transformación funcional creando nuevos productos con el nombre en mayúsculas.
+            .map(ProductoFilters.A_MAYUSCULAS)
+            // filter descarta productos no comercializables: precio cero o correos vacíos.
+            .filter(ProductoFilters.IS_VALID)
+            // doOnNext deja una traza por consola sin modificar los productos del flujo.
+            .doOnNext(ProductoFilters.LOG_PRODUCTO)
+            // defaultIfEmpty evita devolver un Flux vacío si todos los productos fueron filtrados.
+            .defaultIfEmpty(PRODUCTO_GENERICO);
+}
 ```
 
 **4.2** ¿Qué pasa **exactamente** si eliminas
 `.subscribeOn(Schedulers.boundedElastic())` de ese método? Si lo probaste, indica qué
 hilo aparecía en el log antes y después.
 
->
+>Si se elimina el metodo la llamada `.suscribeOn(Schedulers.boundedElastic())` podria ejecutarse en
+> el mismo hilo que atiende la peticion WebFlux, como JPA/Hiberante usa JDBC y este es bloqueante 
+> ese hilo quedaria esperando a la base de datos. En WebFlux esto es peligros por que los hilos de
+> Netty son pocos y estan pensados para no bloquearse, por esa razon en mi `ProductoService` lo mando
+> a consulta a "boundeElastic" que esta diseñado para tareas bloqueantes
 
 **4.3** ¿Por qué `Mono.fromCallable(...)` y no `Mono.just(repository.findAll())`?
 (pista: cuándo se ejecuta cada uno)
 
->
+>Use `Mono.fromCallable(...)` por que aplaza la ejecución de `productoRepository.findAll()` hasta
+> que alguien se suscriba al flujo, en cambio, si se usara `Mono.just(repository.findAll())` la 
+> consulta se ejecutaria de inmediato al construir el `Mono`  antes de que Reactor pueda moverla con 
+> `subscribeOn(Schedulers.boundedElastic())`, por eso el primero permite envolver correctamente la 
+> llamada bloqueante
 
 **4.4** En **tu** código, ¿dónde usaste `defaultIfEmpty` y dónde `switchIfEmpty`, y por
 qué no son intercambiables en esos dos lugares?
 
->
+>Use `defaultIfEmpty(PRODUCTO_GENERICO)` al final de `obtenerProductosComercializables()` por que 
+> si después del filtro no queda ningún producto válido, quiero devolver un producto 
+> generico y que el flujo se complete noramalmente. 
+> En cambio, usé `switchIfEmpty(Mono.error(new ProductoNoEncontradoException(id)))` en 
+> `buscarPorId(Long id)`, porque si no existe el id consultado no quiero que se invente un 
+> producto sino que ese caso se convierta en un error. No son intercambiables porque `defaultIfEmpty`
+> entrega un valor de respaldo mientras que `switchIfEmpty` cambia el flujo vacio por otro `Mono`
+> en mi caso uno que lanza excepción
 
 **4.5** ¿Por qué `doOnNext` no sirve para transformar el elemento, si aparentemente
 "recibe" el producto?
 
->
+>Por que es un operador de efecto secundario, en mi caso mi `ProductoService` lo uso con 
+> `ProductoFilters.LOG_PRODUCTO` para imprimir una traza del producto procesado, qun que se reciba
+> el producto, Reactor ignora cualquier intento de dvolver otro valor desde ahi. En este caso para
+> transformar elementos uso `map` como lo hice con `ProductoMapper::toDominio` y `ProductoFilters.A_MAYUSCULAS`
 
 ---
 
