@@ -297,17 +297,36 @@ Publicidad no disponible en este momento (NombreDeLaExcepcion)
 **6.1** Pega la salida real de tus cuatro `curl`.
 
 ```
+curl.exe http://localhost:8146/api/productos
+[{"id":1,"nombre":"ROSAS DE EXPORTACIÓN","categoria":"Flores","precioUsd":24.50,"correosNotificacion":["ventas@rosas.ec","logistica@rosas.ec"]},{"id":2,"nombre":"CLAVELES PREMIUM","categoria":"Flores","precioUsd":18.75,"correosNotificacion":["comercial@claveles.ec"]},{"id":3,"nombre":"ORQUÍDEAS SELECCIONADAS","categoria":"Flores","precioUsd":32.40,"correosNotificacion":["orquideas@agrosmart.ec"]}]
+
+curl.exe http://localhost:8146/api/productos/1
+{"id":1,"nombre":"Rosas de exportación","categoria":"Flores","precioUsd":24.50,"correosNotificacion":["ventas@rosas.ec","logistica@rosas.ec"]}
+
+curl.exe -i http://localhost:8146/api/productos/9999
+HTTP/1.1 404 Not Found
+Content-Type: application/json
+Content-Length: 127
+
+curl.exe "http://localhost:8146/api/agrosmart/publicidad?producto=Rosas%20de%20exportacion&audiencia=floristerias%20premium"                                                                                                                                      
+"Eleva tus ramos con nuestras rosas de exportación: frescura, calidad y elegancia para tus clientes."
 
 ```
 
 **6.2** ¿Cómo lograste que el id inexistente responda **404** y no 500?
 
->
+>Agregando `@ResponseStatus(HttpStatus.NOT_FOUND)` en mi excepción `ProductoNoEncontradoException`.
+> En el servicio cuando `buscarPorId(Long id)` no encuentra el producto uso 
+> `switchIfEmpty(Mono.error(new ProductoNoEncontradoException(id)))`, de esta manera Spring WebFlux sabe que ese 
+> error debe responder como 404 y no como un error interno 500
 
 **6.3** ¿Qué pasaría si tu controlador devolviera `List<Producto>` en lugar de
 `Flux<Producto>`? ¿Seguiría compilando? ¿Seguiría siendo no bloqueante?
 
->
+>Podria copilar si se cambia tambien el servicio para devolver una lista pero ya no estaria cumpleidno la idea
+>  reactiva, pues para devolver `List<Producto>` se tendría que materializar todos los datos antes de responder, lo 
+> que podria implicar un bloqueo o sacar los datos del flujo reactivo. Con `Flux<Producto>` el controlador mantiene
+> la cadena reactiva y no es necesario usar `block()`
 
 ---
 
